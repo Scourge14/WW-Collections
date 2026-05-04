@@ -457,6 +457,9 @@ body:not(.has-image) canvas {
 
 body:not(.has-image) .canvas-wrap {
   min-height: min(58vh, 560px);
+  background:
+    radial-gradient(circle at 50% 38%, rgba(88, 199, 179, .16), transparent 34%),
+    linear-gradient(180deg, #171a20, #0f1115);
 }
 
 .empty {
@@ -473,6 +476,36 @@ body:not(.has-image) .canvas-wrap {
   color: var(--text);
   font-size: 24px;
   letter-spacing: 0;
+}
+
+body:not(.has-image) .empty {
+  position: absolute;
+  inset: 0;
+  width: min(540px, calc(100% - 44px));
+  min-height: 100%;
+  margin: auto;
+  display: grid !important;
+  place-content: center;
+  align-items: center;
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: var(--radius);
+}
+
+body:not(.has-image) .empty::before {
+  content: "";
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 4px;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(88, 199, 179, .95), rgba(199, 180, 139, .86));
+  box-shadow: 0 18px 48px rgba(88, 199, 179, .18);
+}
+
+body:not(.has-image) .compare,
+body:not(.has-image) .before-float {
+  display: none;
 }
 
 .compare {
@@ -812,6 +845,11 @@ input[type="range"] {
     min-height: min(62svh, 520px);
     align-content: center;
     margin: 0 auto;
+  }
+
+  body:not(.has-image) .empty {
+    width: min(420px, calc(100% - 28px));
+    padding: 22px;
   }
 
   canvas {
