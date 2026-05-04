@@ -680,11 +680,22 @@ input[type="range"] {
 
   .stage {
     padding: 10px;
+    display: block;
+    min-height: auto;
   }
 
   .canvas-wrap {
-    height: 58vh;
-    min-height: 360px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  canvas {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
   }
 
   .compare {
