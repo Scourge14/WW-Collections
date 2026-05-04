@@ -343,8 +343,6 @@ h2 {
   grid-template-columns: 76px minmax(0, 1fr);
   align-items: stretch;
   gap: 10px;
-  content-visibility: auto;
-  contain-intrinsic-size: 96px;
 }
 
 .preset.active {
@@ -451,6 +449,14 @@ canvas {
   width: auto;
   height: auto;
   display: block;
+}
+
+body:not(.has-image) canvas {
+  display: none;
+}
+
+body:not(.has-image) .canvas-wrap {
+  min-height: min(58vh, 560px);
 }
 
 .empty {
@@ -696,8 +702,27 @@ input[type="range"] {
   }
 
   .app {
-    display: block;
+    display: flex;
+    flex-direction: column;
     padding-bottom: calc(84px + var(--safe-bottom));
+  }
+
+  header {
+    order: 0;
+  }
+
+  main {
+    order: 1;
+    display: block;
+    overflow: visible;
+  }
+
+  body > .app > aside:not(.right) {
+    order: 2;
+  }
+
+  .right {
+    order: 3;
   }
 
   header {
@@ -775,6 +800,18 @@ input[type="range"] {
     overflow: visible;
     border-radius: 10px;
     box-shadow: 0 18px 50px rgba(0, 0, 0, .34);
+  }
+
+  body:not(.has-image) .canvas-wrap {
+    min-height: min(62svh, 520px);
+    overflow: hidden;
+  }
+
+  .empty {
+    width: min(420px, calc(100% - 28px));
+    min-height: min(62svh, 520px);
+    align-content: center;
+    margin: 0 auto;
   }
 
   canvas {
@@ -856,6 +893,7 @@ input[type="range"] {
   .preset-list {
     display: flex;
     gap: 10px;
+    min-height: 120px;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;

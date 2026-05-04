@@ -2,7 +2,7 @@ const collections = window.WW_COLLECTIONS;
 const controls = window.WW_CONTROLS;
 
 const state = {
-  collectionId: "editorial",
+  collectionId: "premium",
   presetName: "Filtre Yok",
   presetFilter: "Tümü",
   presetSearch: "",
@@ -48,6 +48,14 @@ const ctx = els.canvas.getContext("2d", { willReadFrequently: true });
 
 function currentCollection() {
   return collections.find(collection => collection.id === state.collectionId);
+}
+
+function orderedCollections() {
+  return [...collections].sort((a, b) => {
+    if (a.id === "premium") return -1;
+    if (b.id === "premium") return 1;
+    return 0;
+  });
 }
 
 function currentPreset() {
@@ -140,7 +148,7 @@ function withControlDefaults(values = {}) {
 
 function renderCollections() {
   els.collectionTabs.innerHTML = "";
-  collections.forEach(collection => {
+  orderedCollections().forEach(collection => {
     const button = document.createElement("button");
     button.className = `tab${collection.id === state.collectionId ? " active" : ""}`;
     button.type = "button";
@@ -634,6 +642,7 @@ function showStatus(message) {
 
 function updateToolState() {
   const hasImage = Boolean(state.image);
+  document.body.classList.toggle("has-image", hasImage);
   [
     els.resetBtn,
     els.exportBtn,
