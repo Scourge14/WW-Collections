@@ -12,7 +12,10 @@ const state = {
   analysis: null,
   aiPick: null,
   fitMode: true,
-  showingBefore: false
+  showingBefore: false,
+  thumbnailCache: new Map(),
+  thumbnailObserver: null,
+  drawFrame: 0
 };
 
 const els = {
@@ -33,6 +36,7 @@ const els = {
   aiReason: document.querySelector("#aiReason"),
   resetBtn: document.querySelector("#resetBtn"),
   beforeBtn: document.querySelector("#beforeBtn"),
+  stageBeforeBtn: document.querySelector("#stageBeforeBtn"),
   exportBtn: document.querySelector("#exportBtn"),
   fitBtn: document.querySelector("#fitBtn"),
   applyAiBtn: document.querySelector("#applyAiBtn"),
@@ -62,7 +66,15 @@ function setPreset(preset) {
   state.values = withControlDefaults(preset.values);
   renderControls();
   renderPresets();
-  draw();
+  scheduleDraw();
+}
+
+function scheduleDraw() {
+  if (state.drawFrame) return;
+  state.drawFrame = window.requestAnimationFrame(() => {
+    state.drawFrame = 0;
+    draw();
+  });
 }
 
 function presetCategory(preset, collection = currentCollection()) {
@@ -170,11 +182,82 @@ function renderPresets() {
     button.type = "button";
     const swatches = preset.colors.map(color => `<span class="swatch" style="background:${color}"></span>`).join("");
     const category = presetCategory(preset);
-    button.innerHTML = `<div class="preset-top"><strong>${preset.name}</strong><span class="preset-tag">${category}</span></div><small>${preset.desc}</small><div class="swatches">${swatches}</div>`;
+    button.innerHTML = `
+      <canvas class="preset-preview" width="160" height="112" aria-hidden="true"></canvas>
+      <div class="preset-copy">
+        <div class="preset-top"><strong>${preset.name}</strong><span class="preset-tag">${category}</span></div>
+        <small>${preset.desc}</small>
+        <div class="swatches">${swatches}</div>
+      </div>`;
     button.addEventListener("click", () => setPreset(preset));
     els.presetList.appendChild(button);
+    queuePresetPreview(button.querySelector(".preset-preview"), preset);
   });
   els.presetMeta.textContent = state.presetName === "Filtre Yok" ? "Preset: Filtre Yok" : `Preset: ${state.presetName}`;
+}
+
+function queuePresetPreview(canvas, preset) {
+  renderPlaceholderPreview(canvas, preset);
+  if (!state.image) return;
+  if (!("IntersectionObserver" in window)) {
+    window.requestIdleCallback?.(() => renderPresetPreview(canvas, preset)) || window.setTimeout(() => renderPresetPreview(canvas, preset), 120);
+    return;
+  }
+  if (!state.thumbnailObserver) {
+    state.thumbnailObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        state.thumbnailObserver.unobserve(entry.target);
+        renderPresetPreview(entry.target, entry.target.__preset);
+      });
+    }, { root: els.presetList, rootMargin: "180px 0px", threshold: .01 });
+  }
+  canvas.__preset = preset;
+  state.thumbnailObserver.observe(canvas);
+}
+
+function renderPlaceholderPreview(canvas, preset) {
+  const preview = canvas.getContext("2d");
+  const gradient = preview.createLinearGradient(0, 0, canvas.width, canvas.height);
+  preset.colors.forEach((color, index) => {
+    gradient.addColorStop(index / Math.max(1, preset.colors.length - 1), color);
+  });
+  preview.fillStyle = gradient;
+  preview.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function renderPresetPreview(canvas, preset) {
+  const key = `${state.original || "empty"}:${preset.name}`;
+  const cached = state.thumbnailCache.get(key);
+  if (cached) {
+    const image = new Image();
+    image.onload = () => canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+    image.src = cached;
+    return;
+  }
+  const preview = canvas.getContext("2d");
+  const values = withControlDefaults(preset.values);
+  const scale = Math.max(canvas.width / state.image.naturalWidth, canvas.height / state.image.naturalHeight);
+  const width = state.image.naturalWidth * scale;
+  const height = state.image.naturalHeight * scale;
+  const x = (canvas.width - width) / 2;
+  const y = (canvas.height - height) / 2;
+  preview.clearRect(0, 0, canvas.width, canvas.height);
+  preview.filter = recipeCssFilter(values);
+  preview.drawImage(state.image, x, y, width, height);
+  preview.filter = "none";
+  if (values.fade) {
+    preview.fillStyle = `rgba(245,238,220,${values.fade / 160})`;
+    preview.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  if (values.vignette) {
+    const gradient = preview.createRadialGradient(canvas.width / 2, canvas.height / 2, canvas.width * .18, canvas.width / 2, canvas.height / 2, canvas.width * .72);
+    gradient.addColorStop(0, "rgba(0,0,0,0)");
+    gradient.addColorStop(1, `rgba(0,0,0,${values.vignette / 85})`);
+    preview.fillStyle = gradient;
+    preview.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  state.thumbnailCache.set(key, canvas.toDataURL("image/jpeg", .72));
 }
 
 function renderControls() {
@@ -182,7 +265,7 @@ function renderControls() {
   controls.forEach((group, index) => {
     const details = document.createElement("details");
     details.className = "control-group";
-    if (index === 0) details.open = true;
+    if (index === 0 || window.matchMedia("(max-width: 760px)").matches) details.open = true;
     details.innerHTML = `<summary>${group.group}</summary>`;
     const stack = document.createElement("div");
     stack.className = "control-stack";
@@ -201,7 +284,7 @@ function renderControls() {
       input.addEventListener("input", () => {
         state.values[key] = Number(input.value);
         output.value = input.value;
-        draw();
+        scheduleDraw();
       });
       stack.appendChild(wrap);
     });
@@ -218,6 +301,7 @@ function loadImage(file) {
     image.onload = () => {
       state.image = image;
       state.original = file.name;
+      state.thumbnailCache.clear();
       state.presetName = "Filtre Yok";
       state.values = withControlDefaults();
       els.emptyState.style.display = "none";
@@ -262,15 +346,21 @@ function draw() {
   }
 
   const v = state.values;
-  const brightness = 100 + (v.exposure || 0) + ((v.shadows || 0) * .14) + ((v.highlights || 0) * .1);
-  const contrast = 100 + (v.contrast || 0) + ((v.clarity || 0) * .35) + ((v.dehaze || 0) * .22) - ((v.fade || 0) * .22);
-  const saturation = 100 + (v.saturation || 0) + ((v.vibrance || 0) * .42);
-  drawBase(`brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`);
+  drawBase(recipeCssFilter(v));
   applyPixelRecipe();
   applySharpness();
   addVignette();
   addGrain();
   els.presetMeta.textContent = `Preset: ${state.presetName}`;
+}
+
+function recipeCssFilter(v) {
+  const brightness = 100 + (v.exposure || 0) + ((v.shadows || 0) * .14) + ((v.highlights || 0) * .1);
+  const contrast = 100 + (v.contrast || 0) + ((v.clarity || 0) * .35) + ((v.dehaze || 0) * .22) - ((v.fade || 0) * .22);
+  const saturation = 100 + (v.saturation || 0) + ((v.vibrance || 0) * .42);
+  const hue = (v.tint || 0) * .22 + (v.warmth || 0) * -.08;
+  const sepia = Math.max(0, v.warmth || 0) * .38;
+  return `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) sepia(${sepia}%) hue-rotate(${hue}deg)`;
 }
 
 function applyPixelRecipe() {
@@ -548,6 +638,7 @@ function updateToolState() {
     els.resetBtn,
     els.exportBtn,
     els.beforeBtn,
+    els.stageBeforeBtn,
     els.fitBtn,
     els.applyAiBtn,
   ].forEach(button => {
@@ -625,7 +716,7 @@ function applyQuickRecipe(type) {
   };
   state.values = { ...state.values, ...recipes[type] };
   renderControls();
-  draw();
+  scheduleDraw();
 }
 
 function shuffleRecipe() {
@@ -635,7 +726,7 @@ function shuffleRecipe() {
     state.values[key] = clamp(Math.round(current + (Math.random() - .5) * span * .16), min, max);
   });
   renderControls();
-  draw();
+  scheduleDraw();
 }
 
 els.fileInput.addEventListener("change", event => loadImage(event.target.files[0]));
@@ -678,6 +769,23 @@ els.beforeBtn.addEventListener("pointerleave", () => {
     draw();
   }
 });
+function bindBeforeButton(button) {
+  button.addEventListener("pointerdown", event => {
+    if (!state.image) return;
+    event.preventDefault();
+    button.setPointerCapture?.(event.pointerId);
+    state.showingBefore = true;
+    draw();
+  });
+  ["pointerup", "pointercancel", "lostpointercapture", "pointerleave"].forEach(type => {
+    button.addEventListener(type, () => {
+      if (!state.showingBefore) return;
+      state.showingBefore = false;
+      draw();
+    });
+  });
+}
+bindBeforeButton(els.stageBeforeBtn);
 els.exportBtn.addEventListener("click", exportPng);
 els.applyAiBtn.addEventListener("click", applyAiPick);
 els.fitBtn.addEventListener("click", draw);
