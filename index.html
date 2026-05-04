@@ -1,0 +1,1680 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WW Collections</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101114;
+      --panel: #17191e;
+      --panel-2: #202329;
+      --line: #343841;
+      --text: #f3f0ea;
+      --muted: #a9adb8;
+      --accent: #58c7b3;
+      --accent-2: #c7b48b;
+      --danger: #ff7474;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .32);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 286px minmax(0, 1fr) 326px;
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    header {
+      grid-column: 1 / -1;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 14px 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      background: rgba(16, 17, 20, .82);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .mark {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      display: grid;
+      place-items: center;
+      background: var(--accent);
+      color: #101114;
+      font-weight: 900;
+      letter-spacing: 0;
+      flex: 0 0 auto;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .brand p,
+    .status p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .workflow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+
+    .step {
+      min-height: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, .08);
+      background: rgba(255, 255, 255, .035);
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .step b {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #2a2e35;
+      color: var(--text);
+      font-size: 11px;
+    }
+
+    .btn {
+      min-height: 40px;
+      padding: 0 14px;
+      border-radius: var(--radius);
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #08201c;
+      border-color: transparent;
+      font-weight: 800;
+    }
+
+    .btn:hover {
+      filter: brightness(1.08);
+    }
+
+    aside,
+    main {
+      min-height: 0;
+    }
+
+    aside {
+      border-right: 1px solid rgba(255, 255, 255, .08);
+      background: rgba(23, 25, 30, .88);
+      overflow: auto;
+    }
+
+    .right {
+      border-left: 1px solid rgba(255, 255, 255, .08);
+      border-right: 0;
+    }
+
+    .section {
+      padding: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.2;
+      text-transform: uppercase;
+      color: #d9dce4;
+      letter-spacing: .08em;
+    }
+
+    .hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .dropzone {
+      min-height: 112px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+      border: 1px dashed #56606c;
+      border-radius: var(--radius);
+      background: #121418;
+    }
+
+    .dropzone strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .dropzone input {
+      display: none;
+    }
+
+    .collection-tabs {
+      display: grid;
+      gap: 8px;
+    }
+
+    .tab {
+      width: 100%;
+      min-height: 48px;
+      text-align: left;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--text);
+      border: 1px solid transparent;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .tab strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tab small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.25;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      background: #22262d;
+      border-color: #4a515d;
+    }
+
+    .tab span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .preset-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .preset-tools {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .preset-search {
+      width: 100%;
+      min-height: 38px;
+      padding: 0 12px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: #121418;
+      color: var(--text);
+      outline: 0;
+    }
+
+    .preset-search:focus {
+      border-color: var(--accent);
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .chip {
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #1b1e24;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chip.active {
+      background: rgba(88, 199, 179, .16);
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    .preset {
+      min-height: 68px;
+      width: 100%;
+      border-radius: var(--radius);
+      background: #1b1e24;
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: 10px;
+      text-align: left;
+      display: grid;
+      gap: 7px;
+    }
+
+    .preset.active {
+      border-color: var(--accent);
+      background: #20262b;
+      box-shadow: 0 0 0 1px rgba(88, 199, 179, .34) inset;
+    }
+
+    .preset strong {
+      font-size: 14px;
+    }
+
+    .preset small {
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 12px;
+    }
+
+    .preset-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .preset-tag {
+      flex: 0 0 auto;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: #121418;
+      border: 1px solid rgba(255, 255, 255, .08);
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .swatches {
+      display: flex;
+      gap: 5px;
+    }
+
+    .swatch {
+      width: 22px;
+      height: 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, .25);
+    }
+
+    main {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      background: #0d0f12;
+      overflow: hidden;
+    }
+
+    .stage {
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      position: relative;
+    }
+
+    .canvas-wrap {
+      width: min(100%, 1120px);
+      height: min(76vh, 780px);
+      display: grid;
+      place-items: center;
+      position: relative;
+      background:
+        linear-gradient(45deg, #17191d 25%, transparent 25%),
+        linear-gradient(-45deg, #17191d 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #17191d 75%),
+        linear-gradient(-45deg, transparent 75%, #17191d 75%),
+        #111318;
+      background-size: 26px 26px;
+      background-position: 0 0, 0 13px, 13px -13px, -13px 0;
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    canvas {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      display: block;
+    }
+
+    .empty {
+      width: min(520px, calc(100% - 36px));
+      text-align: center;
+      display: grid;
+      gap: 14px;
+      justify-items: center;
+      color: var(--muted);
+    }
+
+    .empty h3 {
+      margin: 0;
+      color: var(--text);
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    .compare {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      display: flex;
+      gap: 8px;
+      background: rgba(16, 17, 20, .76);
+      border: 1px solid rgba(255, 255, 255, .11);
+      border-radius: var(--radius);
+      padding: 8px;
+      backdrop-filter: blur(16px);
+      z-index: 4;
+    }
+
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      filter: none;
+    }
+
+    .meta-bar {
+      min-height: 54px;
+      padding: 10px 14px;
+      border-top: 1px solid rgba(255, 255, 255, .08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: #121419;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pill {
+      min-height: 30px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #1d2026;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .ai-box {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border-radius: var(--radius);
+      background: #1d2026;
+      border: 1px solid rgba(255, 255, 255, .1);
+    }
+
+    .ai-box strong {
+      font-size: 15px;
+    }
+
+    .ai-box p {
+      margin: 0;
+      color: #d9dce4;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .control {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .control-group {
+      padding: 0;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: var(--radius);
+      background: #15171c;
+      overflow: hidden;
+    }
+
+    .control-group summary {
+      min-height: 42px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      list-style: none;
+      font-size: 12px;
+      line-height: 1.2;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #d9dce4;
+    }
+
+    .control-group summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .control-group summary::after {
+      content: "+";
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .control-group[open] summary {
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .control-group[open] summary::after {
+      content: "-";
+    }
+
+    .control-stack {
+      padding: 12px;
+    }
+
+    .control label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #d9dce4;
+      font-size: 13px;
+      gap: 10px;
+    }
+
+    .control output {
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .small-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .mini-btn {
+      min-height: 36px;
+      padding: 0 10px;
+      border-radius: var(--radius);
+      background: #202329;
+      color: var(--text);
+      border: 1px solid var(--line);
+      font-size: 12px;
+    }
+
+    .mini-btn:hover {
+      border-color: #5e6673;
+    }
+
+    .footer-note {
+      font-size: 11px;
+      color: #858b97;
+      line-height: 1.5;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 280px minmax(0, 1fr);
+      }
+
+      .workflow {
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .right {
+        grid-column: 1 / -1;
+        border-left: 0;
+        border-top: 1px solid rgba(255, 255, 255, .08);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        display: block;
+      }
+
+      header {
+        position: static;
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .brand {
+        width: 100%;
+      }
+
+      header,
+      .meta-bar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      aside,
+      .right {
+        max-height: none;
+        border-right: 0;
+      }
+
+      .section {
+        padding: 12px;
+      }
+
+      .dropzone {
+        min-height: 92px;
+      }
+
+      .collection-tabs {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .tab {
+        min-height: 58px;
+      }
+
+      .stage {
+        padding: 10px;
+      }
+
+      .canvas-wrap {
+        height: 58vh;
+        min-height: 360px;
+      }
+
+      .compare {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .actions,
+      .small-actions,
+      .quick-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .workflow {
+        justify-content: flex-start;
+        gap: 6px;
+      }
+
+      .btn {
+        width: 100%;
+        min-height: 44px;
+      }
+
+      .preset {
+        min-height: 76px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="mark">TL</div>
+        <div>
+          <h1>WW Collections</h1>
+        </div>
+      </div>
+      <div class="workflow" aria-label="Düzenleme akışı">
+        <span class="step"><b>1</b> Görsel</span>
+        <span class="step"><b>2</b> Filter</span>
+        <span class="step"><b>3</b> Ayar</span>
+        <span class="step"><b>4</b> Export</span>
+      </div>
+      <div class="actions">
+        <button class="btn" id="resetBtn" type="button">Sıfırla</button>
+        <button class="btn" id="beforeBtn" type="button">Basılı Tut: Önce</button>
+        <button class="btn primary" id="exportBtn" type="button">Dışa Aktar</button>
+      </div>
+    </header>
+
+    <aside>
+      <section class="section">
+        <div class="section-title">
+          <h2>Görsel</h2>
+        </div>
+        <label class="dropzone" id="dropzone">
+          <input id="fileInput" type="file" accept="image/*">
+          <span>
+            <strong>Fotoğraf yükle</strong>
+            <span class="hint">Dosyayı buraya bırak ya da seç.</span>
+          </span>
+        </label>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Koleksiyonlar</h2>
+        </div>
+        <div class="collection-tabs" id="collectionTabs"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Filters</h2>
+        </div>
+        <div class="preset-tools">
+          <input class="preset-search" id="presetSearch" type="search" placeholder="Preset ara">
+          <div class="filter-chips" id="presetFilters"></div>
+        </div>
+        <div class="preset-list" id="presetList"></div>
+      </section>
+    </aside>
+
+    <main>
+      <section class="stage">
+        <div class="canvas-wrap">
+          <canvas id="canvas"></canvas>
+          <div class="empty" id="emptyState">
+            <h3>Başlamak için fotoğraf yükle</h3>
+            <p class="hint">Koleksiyon seç, görünümü ayarla, test çıktısını al.</p>
+            <button class="btn primary" id="emptyUploadBtn" type="button">Fotoğraf Seç</button>
+          </div>
+          <div class="compare">
+            <button class="btn" id="fitBtn" type="button">Sığdır</button>
+            <button class="btn" id="applyAiBtn" type="button">Öneriyi Uygula</button>
+          </div>
+        </div>
+      </section>
+      <section class="meta-bar">
+        <div class="meta">
+          <span class="pill" id="fileMeta">Görsel yüklenmedi</span>
+          <span class="pill" id="presetMeta">Preset: Temiz Başlangıç</span>
+          <span class="pill" id="analysisMeta">Analiz bekliyor</span>
+        </div>
+      </section>
+    </main>
+
+    <aside class="right">
+      <section class="section">
+        <div class="section-title">
+          <h2>Öneri</h2>
+        </div>
+        <div class="ai-box">
+          <strong id="aiTitle">Fotoğraf bekleniyor</strong>
+          <p id="aiReason">Fotoğraf yüklendiğinde ışık, kontrast ve renk yoğunluğuna göre uygun bir başlangıç preset’i seçilir.</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Ayarlar</h2>
+        </div>
+        <div class="quick-actions">
+          <button class="mini-btn" data-quick="auto" type="button">Otomatik Düzelt</button>
+          <button class="mini-btn" data-quick="clean" type="button">Temizle</button>
+          <button class="mini-btn" data-quick="film" type="button">Film Greni</button>
+          <button class="mini-btn" data-quick="portrait" type="button">Portre</button>
+        </div>
+        <div id="controls"></div>
+        <div class="small-actions">
+          <button class="btn" id="copyBtn" type="button">Reçeteyi Kopyala</button>
+          <button class="btn" id="randomBtn" type="button">Varyasyon</button>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <script>
+    const collections = [
+      {
+        id: "editorial",
+        name: "Editoryal Sokak",
+        mood: "Şehir, kafe, lifestyle",
+        presets: [
+          { name: "Şehir Temiz", desc: "Gün ışığında net ve dengeli kontrast.", colors: ["#f2eee5", "#8d9a9e", "#1d2328"], values: { exposure: 5, contrast: 10, saturation: -4, warmth: 1, tint: 0, highlights: -8, shadows: 7, fade: 4, grain: 3, vignette: 4 } },
+          { name: "Sıcak Film", desc: "Yumuşak altın ton ve hafif gren.", colors: ["#e2b06c", "#8f5f3d", "#222126"], values: { exposure: 2, contrast: 6, saturation: 8, warmth: 14, tint: 4, highlights: -14, shadows: 10, fade: 12, grain: 10, vignette: 8 } },
+          { name: "Metro Mavi", desc: "Cam, beton ve gece sokakları için soğuk gölge.", colors: ["#b8c8d8", "#38556f", "#10151c"], values: { exposure: -3, contrast: 18, saturation: -8, warmth: -14, tint: -5, highlights: -10, shadows: -4, fade: 3, grain: 6, vignette: 12 } },
+          { name: "Kafe Krem", desc: "İç mekan lifestyle için yumuşak krem ışık.", colors: ["#f1d4a3", "#b98252", "#26211c"], values: { exposure: 7, contrast: 2, saturation: 2, warmth: 10, tint: 3, highlights: -18, shadows: 14, fade: 9, grain: 4, vignette: 2 } },
+          { name: "Asfalt Kontrast", desc: "Sokak çekimleri için güçlü siyah ve keskin detay.", colors: ["#e5e1d8", "#6a7178", "#101114"], values: { exposure: -2, contrast: 22, highlights: -10, shadows: -6, whites: 8, blacks: -18, warmth: -3, vibrance: 4, saturation: -7, clarity: 18, dehaze: 8, sharpen: 18, grain: 5, vignette: 12 } },
+          { name: "Gün Batımı Walk", desc: "Altın saat dış mekanlarında sıcak ve parlak görünüm.", colors: ["#f8c46d", "#d06f51", "#2a1d1c"], values: { exposure: 6, contrast: 8, highlights: -24, shadows: 12, whites: 4, blacks: -6, warmth: 20, tint: 5, vibrance: 16, saturation: 4, clarity: 5, fade: 6, grain: 4, vignette: 6 } }
+        ]
+      },
+      {
+        id: "portrait",
+        name: "Yumuşak Portre",
+        mood: "Cilt, moda, stüdyo",
+        presets: [
+          { name: "Yumuşak Cilt", desc: "Doğal sıcaklık ve nazik kontrast.", colors: ["#f0c4aa", "#c57f68", "#2b2425"], values: { exposure: 8, contrast: -5, saturation: -2, warmth: 6, tint: 7, highlights: -16, shadows: 18, fade: 7, grain: 1, vignette: 3 } },
+          { name: "Sessiz Lüks", desc: "Temiz kampanya görselleri için muted ton.", colors: ["#e8e0d3", "#8f9489", "#252723"], values: { exposure: 3, contrast: 8, saturation: -18, warmth: 3, tint: -2, highlights: -12, shadows: 8, fade: 5, grain: 2, vignette: 6 } },
+          { name: "Flaş Saten", desc: "Parlak vurgu, moda flaşı ve güçlü kontrast.", colors: ["#fff5ea", "#d39085", "#141214"], values: { exposure: 12, contrast: 16, saturation: 3, warmth: 4, tint: 8, highlights: 10, shadows: -8, fade: 0, grain: 5, vignette: 14 } },
+          { name: "Soluk Gül", desc: "Yakın portreler için hafif rose tint.", colors: ["#efc8c4", "#a66f78", "#28202a"], values: { exposure: 6, contrast: 0, saturation: -8, warmth: 2, tint: 14, highlights: -8, shadows: 12, fade: 10, grain: 2, vignette: 5 } },
+          { name: "Beauty Clean", desc: "Cildi yumuşatır, göz ve detayları temiz tutar.", colors: ["#f3d2bf", "#bd8073", "#262326"], values: { exposure: 8, contrast: -8, highlights: -20, shadows: 18, whites: 5, blacks: 0, warmth: 5, tint: 8, vibrance: 4, saturation: -5, texture: -14, clarity: -12, sharpen: 10, noiseReduction: 18, grain: 0, vignette: 2 } },
+          { name: "Moda Edit", desc: "Lookbook ve styling çekimlerine derli toplu kontrast.", colors: ["#f0ece5", "#9a9187", "#191a1d"], values: { exposure: 3, contrast: 14, highlights: -10, shadows: 6, whites: 8, blacks: -12, warmth: 1, tint: 3, vibrance: -2, saturation: -8, texture: 4, clarity: 8, sharpen: 16, grain: 3, vignette: 6 } }
+        ]
+      },
+      {
+        id: "night",
+        name: "Gece Flaş",
+        mood: "Düşük ışık, event, neon",
+        presets: [
+          { name: "Karanlık Sonrası", desc: "Derin siyah ve kontrollü neon.", colors: ["#72d6c9", "#39436e", "#090b10"], values: { exposure: -7, contrast: 24, saturation: 6, warmth: -7, tint: 8, highlights: -22, shadows: -14, fade: 0, grain: 8, vignette: 18 } },
+          { name: "Gece Pazarı", desc: "Sıcak vurgu ve canlı düşük ışık rengi.", colors: ["#ffb05b", "#ca4d47", "#171116"], values: { exposure: 0, contrast: 18, saturation: 12, warmth: 12, tint: 2, highlights: -18, shadows: -6, fade: 5, grain: 9, vignette: 12 } },
+          { name: "Krom Nabız", desc: "Soğuk, teknolojik ve yüksek kontrast.", colors: ["#d9e8ef", "#6976ab", "#101116"], values: { exposure: -2, contrast: 30, saturation: -2, warmth: -18, tint: 6, highlights: -6, shadows: -18, fade: 0, grain: 4, vignette: 16 } },
+          { name: "Düşük Işık Kurtar", desc: "Modu bozmadan gölgeleri açar.", colors: ["#dbd4c7", "#666b78", "#15171f"], values: { exposure: 10, contrast: 4, saturation: -6, warmth: 1, tint: 0, highlights: -24, shadows: 26, fade: 8, grain: 6, vignette: 8 } },
+          { name: "Neon Mor", desc: "Kulüp, konser ve şehir ışığında mor-mavi atmosfer.", colors: ["#f0e6ff", "#8a58c7", "#11101b"], values: { exposure: -3, contrast: 18, highlights: -18, shadows: -8, whites: 6, blacks: -18, warmth: -12, tint: 22, vibrance: 18, saturation: 8, clarity: 10, dehaze: 8, grain: 8, grainRoughness: 16, vignette: 18 } },
+          { name: "Flaş 2000", desc: "Parti flaşı, sert beyazlar ve retro dijital kamera hissi.", colors: ["#fff8ee", "#c8494c", "#151317"], values: { exposure: 12, contrast: 24, highlights: 18, shadows: -18, whites: 18, blacks: -20, warmth: 3, tint: 8, vibrance: 12, saturation: 2, clarity: 12, sharpen: 20, grain: 14, grainSize: 10, grainRoughness: 24, vignette: 20 } }
+        ]
+      },
+      {
+        id: "film",
+        name: "Film Klasikleri",
+        mood: "Analog, nostalji, grain",
+        presets: [
+          { name: "Kodak Sıcak", desc: "Sarı-kırmızı analog ton ve yumuşak gölge.", colors: ["#f2c66f", "#bf6a42", "#2a2320"], values: { exposure: 3, contrast: 7, highlights: -22, shadows: 14, whites: 6, blacks: 4, warmth: 18, tint: 3, vibrance: 10, saturation: 2, clarity: -4, fade: 16, grain: 18, grainSize: 20, grainRoughness: 22, vignette: 8 } },
+          { name: "Fuji Yeşil", desc: "Yeşile kayan serin film tonu ve temiz cilt.", colors: ["#e5eedf", "#749576", "#1e2520"], values: { exposure: 4, contrast: 6, highlights: -16, shadows: 10, whites: 2, blacks: -4, warmth: -4, tint: -12, vibrance: 8, saturation: -4, clarity: 2, fade: 10, grain: 12, grainSize: 14, grainRoughness: 18, vignette: 5 } },
+          { name: "Portra Soft", desc: "Portre ve düğün çekimleri için pastel film görünümü.", colors: ["#f4d8c6", "#c9977f", "#312727"], values: { exposure: 7, contrast: -3, highlights: -26, shadows: 18, whites: 5, blacks: 2, warmth: 10, tint: 7, vibrance: 7, saturation: -8, texture: -6, clarity: -8, fade: 12, grain: 8, grainSize: 12, grainRoughness: 12, vignette: 4 } },
+          { name: "Tri-X Siyah", desc: "Sert siyah beyaz kontrast ve klasik gren.", colors: ["#f0f0ed", "#777777", "#101010"], values: { exposure: 0, contrast: 28, highlights: -8, shadows: -8, whites: 12, blacks: -24, warmth: 0, tint: 0, vibrance: -50, saturation: -50, texture: 16, clarity: 18, dehaze: 8, sharpen: 18, fade: 2, grain: 24, grainSize: 16, grainRoughness: 32, vignette: 15 } }
+        ]
+      },
+      {
+        id: "product",
+        name: "Ürün & İçerik",
+        mood: "E-ticaret, reels, detay",
+        presets: [
+          { name: "Ürün Beyaz", desc: "Temiz zemin, parlak ürün ve doğru beyaz dengesi.", colors: ["#ffffff", "#cfd5dc", "#25272b"], values: { exposure: 10, contrast: 8, highlights: -8, shadows: 10, whites: 18, blacks: -8, warmth: -2, tint: 0, vibrance: 4, saturation: -2, texture: 8, clarity: 8, sharpen: 22, noiseReduction: 8, grain: 0, vignette: 0 } },
+          { name: "Detay Keskin", desc: "Takı, aksesuar ve close-up detayları öne çıkarır.", colors: ["#eee8dc", "#9d8b72", "#171719"], values: { exposure: 4, contrast: 16, highlights: -14, shadows: 8, whites: 10, blacks: -12, warmth: 4, vibrance: 8, saturation: 2, texture: 24, clarity: 18, dehaze: 8, sharpen: 30, noiseReduction: 4, grain: 2, vignette: 4 } },
+          { name: "Reels Pop", desc: "Sosyal medya için canlı ama kontrollü renk.", colors: ["#fff2c4", "#ff6f61", "#202632"], values: { exposure: 7, contrast: 12, highlights: -12, shadows: 12, whites: 8, blacks: -8, warmth: 4, tint: 2, vibrance: 24, saturation: 8, texture: 4, clarity: 6, sharpen: 18, grain: 1, vignette: 3 } },
+          { name: "Minimal Gri", desc: "Marka postları için sade, soğuk ve premium.", colors: ["#ebecea", "#8b9296", "#1b1d20"], values: { exposure: 5, contrast: 10, highlights: -10, shadows: 8, whites: 5, blacks: -10, warmth: -8, tint: -2, vibrance: -8, saturation: -14, texture: 5, clarity: 8, sharpen: 16, fade: 5, grain: 2, vignette: 2 } }
+        ]
+      },
+      {
+        id: "vintage",
+        name: "Vintage & 2000ler",
+        mood: "Retro, digital camera, nostalji",
+        presets: [
+          { name: "Y2K Digicam", desc: "2000'ler kompakt kamera flaşı, sert beyaz ve dijital renk.", colors: ["#fff4df", "#f05f6d", "#17151d"], values: { exposure: 9, contrast: 26, highlights: 14, shadows: -16, whites: 20, blacks: -18, warmth: 2, tint: 10, vibrance: 20, saturation: 6, texture: 4, clarity: 16, dehaze: 4, sharpen: 26, noiseReduction: 0, fade: 0, grain: 10, grainSize: 6, grainRoughness: 20, vignette: 18 } },
+          { name: "Camcorder 2003", desc: "Eski video kamera gibi düşük kontrast, yeşilimsi gölge ve gren.", colors: ["#dfe4c8", "#8f9b76", "#20231d"], values: { exposure: 2, contrast: -8, highlights: -18, shadows: 18, whites: -4, blacks: 8, warmth: -6, tint: -16, vibrance: 4, saturation: -10, texture: -4, clarity: -8, dehaze: -10, sharpen: 6, noiseReduction: 6, fade: 22, grain: 20, grainSize: 24, grainRoughness: 28, vignette: 10 } },
+          { name: "Disposable Flash", desc: "Tek kullanımlık kamera hissi, sıcak flaş ve karanlık kenarlar.", colors: ["#ffd89a", "#b75b41", "#17110f"], values: { exposure: 6, contrast: 18, highlights: 8, shadows: -12, whites: 14, blacks: -20, warmth: 16, tint: 4, vibrance: 12, saturation: 4, texture: 8, clarity: 10, sharpen: 16, fade: 6, grain: 24, grainSize: 14, grainRoughness: 32, vignette: 24 } },
+          { name: "Eski Albüm", desc: "Solmuş aile albümü tonu, mat siyahlar ve sararmış highlight.", colors: ["#ecd6a1", "#a98463", "#332922"], values: { exposure: 4, contrast: -6, highlights: -24, shadows: 20, whites: -4, blacks: 12, warmth: 18, tint: 2, vibrance: -8, saturation: -18, texture: -6, clarity: -6, dehaze: -6, fade: 26, grain: 16, grainSize: 18, grainRoughness: 20, vignette: 8 } },
+          { name: "VHS Neon", desc: "Mor-mavi gece tonu ve analog video havası.", colors: ["#d8d4ff", "#7d61c8", "#101024"], values: { exposure: -2, contrast: 10, highlights: -14, shadows: 4, whites: 4, blacks: -8, warmth: -16, tint: 24, vibrance: 22, saturation: 8, texture: -8, clarity: -4, dehaze: -4, sharpen: 8, fade: 12, grain: 18, grainSize: 28, grainRoughness: 24, vignette: 18 } },
+          { name: "Magazine 1999", desc: "Eski moda dergisi gibi parlak cilt, sıcak ton ve soft kontrast.", colors: ["#f6c9ad", "#d0866b", "#251d22"], values: { exposure: 8, contrast: 4, highlights: -10, shadows: 14, whites: 10, blacks: 0, warmth: 11, tint: 10, vibrance: 8, saturation: -2, texture: -12, clarity: -10, sharpen: 8, noiseReduction: 16, fade: 8, grain: 8, grainSize: 10, grainRoughness: 12, vignette: 5 } }
+        ]
+      },
+      {
+        id: "outdoor",
+        name: "Dış Çekim",
+        mood: "Gün ışığı, doğa, sokak, seyahat",
+        presets: [
+          { name: "Dış Gün Işığı", desc: "Sert güneşte highlight kontrolü ve doğal renk.", colors: ["#f5edca", "#7fa0a1", "#263238"], values: { exposure: 3, contrast: 8, highlights: -34, shadows: 18, whites: 6, blacks: -10, warmth: 3, tint: -2, vibrance: 12, saturation: 0, texture: 6, clarity: 8, dehaze: 4, sharpen: 18, noiseReduction: 4, grain: 2, vignette: 3 } },
+          { name: "Golden Outdoor", desc: "Altın saat portreleri için sıcak, temiz ve romantik ton.", colors: ["#ffd28a", "#d8784f", "#2b211d"], values: { exposure: 5, contrast: 6, highlights: -28, shadows: 14, whites: 8, blacks: -6, warmth: 22, tint: 5, vibrance: 14, saturation: 3, texture: -4, clarity: -3, sharpen: 12, fade: 5, grain: 5, grainSize: 8, vignette: 7 } },
+          { name: "Travel Clear", desc: "Seyahat fotoğraflarında gökyüzü, bina ve teni dengeler.", colors: ["#d9eef7", "#6996a9", "#1d2b31"], values: { exposure: 4, contrast: 12, highlights: -24, shadows: 16, whites: 8, blacks: -12, warmth: -2, tint: 0, vibrance: 20, saturation: 4, texture: 8, clarity: 10, dehaze: 12, sharpen: 18, grain: 1, vignette: 4 } },
+          { name: "Yeşil Doğa", desc: "Park, orman ve doğa çekimlerinde yeşili kontrollü tutar.", colors: ["#e2e9c4", "#6f8f5f", "#1d2619"], values: { exposure: 2, contrast: 8, highlights: -22, shadows: 18, whites: 4, blacks: -8, warmth: -1, tint: -10, vibrance: 12, saturation: -4, texture: 10, clarity: 8, dehaze: 7, sharpen: 14, grain: 3, vignette: 5 } },
+          { name: "Bulutlu Soft", desc: "Kapalı havada gri ışığı yumuşatır, cildi canlı tutar.", colors: ["#e8e6dc", "#9fa7aa", "#2b2f34"], values: { exposure: 8, contrast: 2, highlights: -14, shadows: 20, whites: 6, blacks: -4, warmth: 5, tint: 4, vibrance: 10, saturation: -2, texture: -2, clarity: -4, dehaze: -2, sharpen: 10, noiseReduction: 8, fade: 6, grain: 4, vignette: 3 } }
+        ]
+      },
+      {
+        id: "indoor",
+        name: "İç Çekim",
+        mood: "Kafe, ev, stüdyo, düşük ışık",
+        presets: [
+          { name: "İç Mekan Temiz", desc: "Ev ve stüdyo ışığında temiz beyaz, doğal cilt.", colors: ["#f4eee7", "#b9a799", "#242225"], values: { exposure: 7, contrast: 6, highlights: -18, shadows: 18, whites: 8, blacks: -6, warmth: 4, tint: 3, vibrance: 8, saturation: -2, texture: 2, clarity: 2, sharpen: 14, noiseReduction: 12, grain: 1, vignette: 2 } },
+          { name: "Kafe Loş", desc: "Kahve, restoran ve sarı ampul ışığında sıcak atmosfer.", colors: ["#e8b56d", "#935d3c", "#211913"], values: { exposure: 5, contrast: 10, highlights: -26, shadows: 18, whites: 4, blacks: -8, warmth: 18, tint: 4, vibrance: 10, saturation: 2, texture: 4, clarity: 4, sharpen: 12, noiseReduction: 10, fade: 8, grain: 8, grainSize: 12, vignette: 8 } },
+          { name: "Studio Softbox", desc: "Softbox ışığında ürün/portre için temiz ve parlak edit.", colors: ["#fff8ef", "#d7c8bc", "#25262a"], values: { exposure: 9, contrast: 5, highlights: -16, shadows: 12, whites: 14, blacks: -8, warmth: 1, tint: 2, vibrance: 6, saturation: -3, texture: 4, clarity: 2, sharpen: 20, noiseReduction: 10, grain: 0, vignette: 0 } },
+          { name: "Ev Retro", desc: "Ev içi fotoğraflarda sıcak, nostaljik ve hafif mat görünüm.", colors: ["#ecc48c", "#a46d4f", "#2b211b"], values: { exposure: 4, contrast: 2, highlights: -22, shadows: 20, whites: 2, blacks: 8, warmth: 16, tint: 4, vibrance: 4, saturation: -8, texture: -6, clarity: -5, fade: 18, grain: 14, grainSize: 16, grainRoughness: 18, vignette: 7 } },
+          { name: "Low Light Clean", desc: "Az ışıkta gürültüyü azaltır, yüz ve ürün detayını korur.", colors: ["#ddd7ca", "#6e7480", "#151821"], values: { exposure: 11, contrast: 4, highlights: -28, shadows: 30, whites: 4, blacks: -6, warmth: 2, tint: 2, vibrance: 5, saturation: -6, texture: -4, clarity: -4, sharpen: 10, noiseReduction: 26, fade: 6, grain: 4, vignette: 6 } }
+        ]
+      }
+    ];
+
+    const controls = [
+      {
+        group: "Işık",
+        items: [
+          ["exposure", "Pozlama", -50, 50],
+          ["contrast", "Kontrast", -50, 50],
+          ["highlights", "Parlak Alanlar", -60, 60],
+          ["shadows", "Gölgeler", -60, 60],
+          ["whites", "Beyazlar", -50, 50],
+          ["blacks", "Siyahlar", -50, 50]
+        ]
+      },
+      {
+        group: "Renk",
+        items: [
+          ["warmth", "Sıcaklık", -50, 50],
+          ["tint", "Ton Kaydırma", -50, 50],
+          ["vibrance", "Canlılık", -50, 50],
+          ["saturation", "Doygunluk", -50, 50]
+        ]
+      },
+      {
+        group: "Detay",
+        items: [
+          ["texture", "Doku", -40, 40],
+          ["clarity", "Netlik", -40, 40],
+          ["dehaze", "Pus Giderme", -40, 40],
+          ["sharpen", "Keskinlik", 0, 50],
+          ["noiseReduction", "Kumlanma Azalt", 0, 50]
+        ]
+      },
+      {
+        group: "Efekt",
+        items: [
+          ["fade", "Matlık", 0, 50],
+          ["grain", "Gren", 0, 50],
+          ["grainSize", "Gren Boyutu", 0, 50],
+          ["grainRoughness", "Gren Sertliği", 0, 50],
+          ["vignette", "Vinyet", 0, 50]
+        ]
+      }
+    ];
+
+    const state = {
+      collectionId: "editorial",
+      presetName: "Filtre Yok",
+      presetFilter: "Tümü",
+      presetSearch: "",
+      values: {},
+      image: null,
+      original: null,
+      analysis: null,
+      aiPick: null,
+      fitMode: true,
+      showingBefore: false
+    };
+
+    const els = {
+      fileInput: document.querySelector("#fileInput"),
+      emptyUploadBtn: document.querySelector("#emptyUploadBtn"),
+      dropzone: document.querySelector("#dropzone"),
+      collectionTabs: document.querySelector("#collectionTabs"),
+      presetSearch: document.querySelector("#presetSearch"),
+      presetFilters: document.querySelector("#presetFilters"),
+      presetList: document.querySelector("#presetList"),
+      controls: document.querySelector("#controls"),
+      canvas: document.querySelector("#canvas"),
+      emptyState: document.querySelector("#emptyState"),
+      fileMeta: document.querySelector("#fileMeta"),
+      presetMeta: document.querySelector("#presetMeta"),
+      analysisMeta: document.querySelector("#analysisMeta"),
+      aiTitle: document.querySelector("#aiTitle"),
+      aiReason: document.querySelector("#aiReason"),
+      resetBtn: document.querySelector("#resetBtn"),
+      beforeBtn: document.querySelector("#beforeBtn"),
+      exportBtn: document.querySelector("#exportBtn"),
+      fitBtn: document.querySelector("#fitBtn"),
+      applyAiBtn: document.querySelector("#applyAiBtn"),
+      copyBtn: document.querySelector("#copyBtn"),
+      randomBtn: document.querySelector("#randomBtn")
+    };
+
+    const ctx = els.canvas.getContext("2d", { willReadFrequently: true });
+
+    function currentCollection() {
+      return collections.find(collection => collection.id === state.collectionId);
+    }
+
+    function currentPreset() {
+      return currentCollection().presets.find(preset => preset.name === state.presetName) || {
+        name: "Filtre Yok",
+        values: {}
+      };
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function setPreset(preset) {
+      state.presetName = preset.name;
+      state.values = withControlDefaults(preset.values);
+      renderControls();
+      renderPresets();
+      draw();
+    }
+
+    function presetCategory(preset, collection = currentCollection()) {
+      const text = `${collection.name} ${collection.mood} ${preset.name} ${preset.desc}`.toLowerCase();
+      if (collection.id === "film") return "Film";
+      if (collection.id === "outdoor") return "Dış";
+      if (collection.id === "indoor") return "İç";
+      if (collection.id === "product") return "Ürün";
+      if (collection.id === "portrait") return "Portre";
+      if (collection.id === "night") return "Gece";
+      if (collection.id === "vintage") {
+        if (text.includes("2000") || text.includes("y2k") || text.includes("digicam") || text.includes("camcorder") || text.includes("vhs")) return "2000ler";
+        return "Vintage";
+      }
+      if (text.includes("2000") || text.includes("y2k") || text.includes("digicam") || text.includes("camcorder") || text.includes("vhs")) return "2000ler";
+      if (text.includes("vintage") || text.includes("retro") || text.includes("nostalji") || text.includes("eski") || text.includes("disposable")) return "Vintage";
+      if (text.includes("dış") || text.includes("outdoor") || text.includes("seyahat") || text.includes("doğa") || text.includes("gün ışığı") || text.includes("golden")) return "Dış";
+      if (text.includes("iç") || text.includes("indoor") || text.includes("kafe") || text.includes("ev") || text.includes("stüdyo") || text.includes("softbox")) return "İç";
+      if (text.includes("ürün") || text.includes("reels") || text.includes("e-ticaret") || text.includes("detay")) return "Ürün";
+      if (text.includes("film") || text.includes("kodak") || text.includes("fuji") || text.includes("portra") || text.includes("analog") || text.includes("tri-x")) return "Film";
+      if (text.includes("portre") || text.includes("cilt") || text.includes("beauty") || text.includes("moda")) return "Portre";
+      if (text.includes("gece") || text.includes("neon") || text.includes("flaş") || text.includes("düşük ışık") || text.includes("karanlık")) return "Gece";
+      if (text.includes("sokak") || text.includes("şehir") || text.includes("metro") || text.includes("asfalt")) return "Sokak";
+      return "Günlük";
+    }
+
+    function renderPresetFilters() {
+      const filters = ["Tümü", "Günlük", "Sokak", "Portre", "Gece", "Film", "Vintage", "2000ler", "Dış", "İç", "Ürün"];
+      const counts = currentCollection().presets.reduce((map, preset) => {
+        const category = presetCategory(preset);
+        map[category] = (map[category] || 0) + 1;
+        return map;
+      }, {});
+      const visibleFilters = filters.filter(filter => filter === "Tümü" || counts[filter]);
+      if (state.presetFilter !== "Tümü" && !counts[state.presetFilter]) {
+        state.presetFilter = "Tümü";
+      }
+      els.presetFilters.innerHTML = "";
+      visibleFilters.forEach(filter => {
+        const button = document.createElement("button");
+        button.className = `chip${filter === state.presetFilter ? " active" : ""}`;
+        button.type = "button";
+        button.textContent = filter === "Tümü" ? `Tümü ${currentCollection().presets.length}` : `${filter} ${counts[filter]}`;
+        button.addEventListener("click", () => {
+          state.presetFilter = filter;
+          renderPresetFilters();
+          renderPresets();
+        });
+        els.presetFilters.appendChild(button);
+      });
+    }
+
+    function allControlItems() {
+      return controls.flatMap(group => group.items);
+    }
+
+    function withControlDefaults(values = {}) {
+      return allControlItems().reduce((recipe, [key]) => {
+        recipe[key] = values[key] ?? 0;
+        return recipe;
+      }, {});
+    }
+
+    function renderCollections() {
+      els.collectionTabs.innerHTML = "";
+      collections.forEach(collection => {
+        const button = document.createElement("button");
+        button.className = `tab${collection.id === state.collectionId ? " active" : ""}`;
+        button.type = "button";
+        button.innerHTML = `<span><strong>${collection.name}</strong><small>${collection.mood}</small></span><span>${collection.presets.length}</span>`;
+        button.addEventListener("click", () => {
+          state.collectionId = collection.id;
+          state.presetFilter = "Tümü";
+          state.presetSearch = "";
+          els.presetSearch.value = "";
+          setPreset(collection.presets[0]);
+          renderPresetFilters();
+          renderCollections();
+        });
+        els.collectionTabs.appendChild(button);
+      });
+    }
+
+    function renderPresets() {
+      els.presetList.innerHTML = "";
+      const query = state.presetSearch.trim().toLowerCase();
+      const filteredPresets = currentCollection().presets.filter(preset => {
+        const category = presetCategory(preset);
+        const text = `${preset.name} ${preset.desc} ${category}`.toLowerCase();
+        const matchesFilter = state.presetFilter === "Tümü" || category === state.presetFilter;
+        const matchesSearch = !query || text.includes(query);
+        return matchesFilter && matchesSearch;
+      });
+
+      if (!filteredPresets.length) {
+        const empty = document.createElement("p");
+        empty.className = "hint";
+        empty.textContent = "Bu aramada preset bulunamadı.";
+        els.presetList.appendChild(empty);
+      }
+
+      filteredPresets.forEach(preset => {
+        const button = document.createElement("button");
+        button.className = `preset${preset.name === state.presetName ? " active" : ""}`;
+        button.type = "button";
+        const swatches = preset.colors.map(color => `<span class="swatch" style="background:${color}"></span>`).join("");
+        const category = presetCategory(preset);
+        button.innerHTML = `<div class="preset-top"><strong>${preset.name}</strong><span class="preset-tag">${category}</span></div><small>${preset.desc}</small><div class="swatches">${swatches}</div>`;
+        button.addEventListener("click", () => setPreset(preset));
+        els.presetList.appendChild(button);
+      });
+      els.presetMeta.textContent = state.presetName === "Filtre Yok" ? "Preset: Filtre Yok" : `Preset: ${state.presetName}`;
+    }
+
+    function renderControls() {
+      els.controls.innerHTML = "";
+      controls.forEach((group, index) => {
+        const details = document.createElement("details");
+        details.className = "control-group";
+        if (index === 0) details.open = true;
+        details.innerHTML = `<summary>${group.group}</summary>`;
+        const stack = document.createElement("div");
+        stack.className = "control-stack";
+        group.items.forEach(([key, label, min, max]) => {
+          const wrap = document.createElement("div");
+          wrap.className = "control";
+          wrap.innerHTML = `
+            <label for="${key}">
+              <span>${label}</span>
+              <output id="${key}Out">${state.values[key] ?? 0}</output>
+            </label>
+            <input id="${key}" type="range" min="${min}" max="${max}" value="${state.values[key] ?? 0}">
+          `;
+          const input = wrap.querySelector("input");
+          const output = wrap.querySelector("output");
+          input.addEventListener("input", () => {
+            state.values[key] = Number(input.value);
+            output.value = input.value;
+            draw();
+          });
+          stack.appendChild(wrap);
+        });
+        details.appendChild(stack);
+        els.controls.appendChild(details);
+      });
+    }
+
+    function loadImage(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const image = new Image();
+        image.onload = () => {
+          state.image = image;
+          state.original = file.name;
+          state.presetName = "Filtre Yok";
+          state.values = withControlDefaults();
+          els.emptyState.style.display = "none";
+          els.fileMeta.textContent = `${file.name} · ${image.naturalWidth}x${image.naturalHeight}`;
+          analyzeImage();
+          updateToolState();
+          renderControls();
+          renderPresets();
+          draw();
+        };
+        image.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function getDrawSize() {
+      const max = 1800;
+      const scale = Math.min(1, max / Math.max(state.image.naturalWidth, state.image.naturalHeight));
+      return {
+        width: Math.round(state.image.naturalWidth * scale),
+        height: Math.round(state.image.naturalHeight * scale)
+      };
+    }
+
+    function drawBase(filter = "none") {
+      if (!state.image) return false;
+      const size = getDrawSize();
+      els.canvas.width = size.width;
+      els.canvas.height = size.height;
+      ctx.clearRect(0, 0, size.width, size.height);
+      ctx.filter = filter;
+      ctx.drawImage(state.image, 0, 0, size.width, size.height);
+      ctx.filter = "none";
+      return true;
+    }
+
+    function draw() {
+      if (!state.image) return;
+      if (state.showingBefore) {
+        drawBase();
+        return;
+      }
+
+      const v = state.values;
+      const brightness = 100 + (v.exposure || 0) + ((v.shadows || 0) * .14) + ((v.highlights || 0) * .1);
+      const contrast = 100 + (v.contrast || 0) + ((v.clarity || 0) * .35) + ((v.dehaze || 0) * .22) - ((v.fade || 0) * .22);
+      const saturation = 100 + (v.saturation || 0) + ((v.vibrance || 0) * .42);
+      drawBase(`brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`);
+      applyPixelRecipe();
+      applySharpness();
+      addVignette();
+      addGrain();
+      els.presetMeta.textContent = `Preset: ${state.presetName}`;
+    }
+
+    function applyPixelRecipe() {
+      const imageData = ctx.getImageData(0, 0, els.canvas.width, els.canvas.height);
+      const data = imageData.data;
+      const v = state.values;
+      const warmth = (v.warmth || 0) / 100;
+      const tint = (v.tint || 0) / 100;
+      const fade = (v.fade || 0) / 100;
+      const highlights = (v.highlights || 0) / 100;
+      const shadows = (v.shadows || 0) / 100;
+      const whites = (v.whites || 0) / 100;
+      const blacks = (v.blacks || 0) / 100;
+      const vibrance = (v.vibrance || 0) / 100;
+      const texture = (v.texture || 0) / 100;
+      const clarity = (v.clarity || 0) / 100;
+      const dehaze = (v.dehaze || 0) / 100;
+      const noiseReduction = (v.noiseReduction || 0) / 100;
+
+      for (let i = 0; i < data.length; i += 4) {
+        let r = data[i];
+        let g = data[i + 1];
+        let b = data[i + 2];
+        const lum = (r * .299 + g * .587 + b * .114) / 255;
+        const shadowMask = 1 - lum;
+        const highlightMask = lum;
+        const midMask = 1 - Math.abs(lum - .5) * 2;
+
+        r += warmth * 34;
+        b -= warmth * 30;
+        r += tint * 18;
+        b += tint * 20;
+        g -= tint * 16;
+
+        r += highlights * highlightMask * 36;
+        g += highlights * highlightMask * 36;
+        b += highlights * highlightMask * 36;
+        r += shadows * shadowMask * 34;
+        g += shadows * shadowMask * 34;
+        b += shadows * shadowMask * 34;
+        r += whites * Math.pow(highlightMask, 1.8) * 42;
+        g += whites * Math.pow(highlightMask, 1.8) * 42;
+        b += whites * Math.pow(highlightMask, 1.8) * 42;
+        r += blacks * Math.pow(shadowMask, 1.8) * 42;
+        g += blacks * Math.pow(shadowMask, 1.8) * 42;
+        b += blacks * Math.pow(shadowMask, 1.8) * 42;
+
+        const avg = (r + g + b) / 3;
+        const colorSpread = Math.abs(r - avg) + Math.abs(g - avg) + Math.abs(b - avg);
+        const vibranceMask = Math.max(0, 1 - colorSpread / 220);
+        r += (r - avg) * vibrance * vibranceMask * .7;
+        g += (g - avg) * vibrance * vibranceMask * .7;
+        b += (b - avg) * vibrance * vibranceMask * .7;
+        r += (r - avg) * clarity * midMask * .28;
+        g += (g - avg) * clarity * midMask * .28;
+        b += (b - avg) * clarity * midMask * .28;
+        r += (r - avg) * texture * .18;
+        g += (g - avg) * texture * .18;
+        b += (b - avg) * texture * .18;
+        r += dehaze * (lum - .5) * 35;
+        g += dehaze * (lum - .5) * 35;
+        b += dehaze * (lum - .5) * 35;
+
+        if (noiseReduction) {
+          r = r * (1 - noiseReduction * .25) + avg * noiseReduction * .25;
+          g = g * (1 - noiseReduction * .25) + avg * noiseReduction * .25;
+          b = b * (1 - noiseReduction * .25) + avg * noiseReduction * .25;
+        }
+
+        r = r * (1 - fade) + 24 * fade;
+        g = g * (1 - fade) + 25 * fade;
+        b = b * (1 - fade) + 28 * fade;
+
+        data[i] = clamp(r, 0, 255);
+        data[i + 1] = clamp(g, 0, 255);
+        data[i + 2] = clamp(b, 0, 255);
+      }
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    function applySharpness() {
+      const amount = (state.values.sharpen || 0) / 100;
+      if (!amount) return;
+      const imageData = ctx.getImageData(0, 0, els.canvas.width, els.canvas.height);
+      const data = imageData.data;
+      const copy = new Uint8ClampedArray(data);
+      const width = els.canvas.width;
+      const height = els.canvas.height;
+      const strength = amount * 1.25;
+
+      for (let y = 1; y < height - 1; y += 1) {
+        for (let x = 1; x < width - 1; x += 1) {
+          const i = (y * width + x) * 4;
+          for (let c = 0; c < 3; c += 1) {
+            const center = copy[i + c] * 5;
+            const left = copy[i - 4 + c];
+            const right = copy[i + 4 + c];
+            const top = copy[i - width * 4 + c];
+            const bottom = copy[i + width * 4 + c];
+            const sharpened = center - left - right - top - bottom;
+            data[i + c] = clamp(copy[i + c] * (1 - strength) + sharpened * strength, 0, 255);
+          }
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    function addVignette() {
+      const amount = (state.values.vignette || 0) / 100;
+      if (!amount) return;
+      const w = els.canvas.width;
+      const h = els.canvas.height;
+      const gradient = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * .2, w / 2, h / 2, Math.max(w, h) * .72);
+      gradient.addColorStop(0, "rgba(0,0,0,0)");
+      gradient.addColorStop(1, `rgba(0,0,0,${amount})`);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    function addGrain() {
+      const amount = state.values.grain || 0;
+      if (!amount) return;
+      const imageData = ctx.getImageData(0, 0, els.canvas.width, els.canvas.height);
+      const data = imageData.data;
+      const size = 1 + Math.round((state.values.grainSize || 0) / 14);
+      const roughness = 1 + ((state.values.grainRoughness || 0) / 28);
+      for (let i = 0; i < data.length; i += 4) {
+        const pixel = i / 4;
+        const x = pixel % els.canvas.width;
+        const y = Math.floor(pixel / els.canvas.width);
+        const seed = Math.sin(Math.floor(x / size) * 12.9898 + Math.floor(y / size) * 78.233) * 43758.5453;
+        const pattern = seed - Math.floor(seed);
+        const noise = (pattern - .5) * amount * roughness * 2.4;
+        data[i] = clamp(data[i] + noise, 0, 255);
+        data[i + 1] = clamp(data[i + 1] + noise, 0, 255);
+        data[i + 2] = clamp(data[i + 2] + noise, 0, 255);
+      }
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    function analyzeImage() {
+      drawBase();
+      const sample = ctx.getImageData(0, 0, els.canvas.width, els.canvas.height).data;
+      let lum = 0;
+      let sat = 0;
+      let contrast = 0;
+      const step = 20;
+      const luminances = [];
+
+      for (let i = 0; i < sample.length; i += 4 * step) {
+        const r = sample[i] / 255;
+        const g = sample[i + 1] / 255;
+        const b = sample[i + 2] / 255;
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const l = (max + min) / 2;
+        lum += l;
+        sat += max === min ? 0 : (max - min) / (1 - Math.abs(2 * l - 1));
+        luminances.push(l);
+      }
+
+      lum /= luminances.length;
+      sat /= luminances.length;
+      const mean = lum;
+      contrast = Math.sqrt(luminances.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / luminances.length);
+
+      state.analysis = { lum, sat, contrast };
+      chooseAiPick();
+    }
+
+    function chooseAiPick() {
+      const a = state.analysis;
+      let pick = collections[0].presets[0];
+      let reason = "Fotoğraf dengeli ışığa sahip. Temiz ve kontrollü bir başlangıç daha iyi sonuç verir.";
+
+      if (a.lum < .33) {
+        pick = findPreset("Düşük Işık Kurtar");
+        reason = "Fotoğraf karanlık görünüyor. Bu preset gölgeleri açarken düşük ışık havasını korur.";
+      } else if (a.lum < .42 && a.contrast > .22) {
+        pick = findPreset("Karanlık Sonrası");
+        reason = "Karede derin gölge ve güçlü kontrast var. Daha sert bir gece görünümü iyi oturur.";
+      } else if (a.sat > .42) {
+        pick = findPreset("Sessiz Lüks");
+        reason = "Fotoğraf zaten renkli. Doygunluğu azaltan premium bir ton daha kontrollü durur.";
+      } else if (a.lum > .66) {
+        pick = findPreset("Kafe Krem");
+        reason = "Fotoğraf parlak. Krem tonlu yumuşak vurgu sertliği azaltır.";
+      } else if (a.contrast < .13) {
+        pick = findPreset("Şehir Temiz");
+        reason = "Fotoğraf biraz düz. Temiz kontrast ilk düzeltme için pratik bir seçim.";
+      } else {
+        pick = findPreset("Sıcak Film");
+        reason = "Fotoğrafta sıcak film görünümünü taşıyacak kadar detay var.";
+      }
+
+      state.aiPick = pick;
+      els.aiTitle.textContent = pick.name;
+      els.aiReason.textContent = reason;
+      els.analysisMeta.textContent = `Işık ${Math.round(a.lum * 100)} · Renk ${Math.round(a.sat * 100)} · Kontrast ${Math.round(a.contrast * 100)}`;
+    }
+
+    function findPreset(name) {
+      return collections.flatMap(collection => collection.presets).find(preset => preset.name === name);
+    }
+
+    function applyAiPick() {
+      if (!state.aiPick) return;
+      const collection = collections.find(item => item.presets.includes(state.aiPick));
+      state.collectionId = collection.id;
+      renderCollections();
+      setPreset(state.aiPick);
+    }
+
+    function exportPng() {
+      if (!state.image) {
+        showStatus("Önce fotoğraf yükle");
+        return;
+      }
+      draw();
+      const safePreset = safeName(state.presetName);
+      exportCanvas(`ww-collections-${safePreset}.png`);
+    }
+
+    function exportCanvas(filename) {
+      els.canvas.toBlob(blob => {
+        if (!blob) {
+          showStatus("PNG alınamadı");
+          return;
+        }
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.download = filename;
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1200);
+        showStatus("PNG hazırlandı");
+      }, "image/png");
+    }
+
+    function safeName(text) {
+      return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ı/g, "i")
+        .replace(/ğ/g, "g")
+        .replace(/ü/g, "u")
+        .replace(/ş/g, "s")
+        .replace(/ö/g, "o")
+        .replace(/ç/g, "c")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+    }
+
+    function copyRecipe() {
+      const recipe = {
+        collection: currentCollection().name,
+        preset: state.presetName,
+        values: state.values
+      };
+      navigator.clipboard.writeText(JSON.stringify(recipe, null, 2));
+      els.copyBtn.textContent = "Kopyalandı";
+      window.setTimeout(() => els.copyBtn.textContent = "Reçeteyi Kopyala", 1200);
+    }
+
+    function showStatus(message) {
+      els.analysisMeta.textContent = message;
+    }
+
+    function updateToolState() {
+      const hasImage = Boolean(state.image);
+      [
+        els.resetBtn,
+        els.exportBtn,
+        els.beforeBtn,
+        els.fitBtn,
+        els.applyAiBtn,
+      ].forEach(button => {
+        button.disabled = !hasImage;
+      });
+    }
+
+    function applyQuickRecipe(type) {
+      const recipes = {
+        auto: {
+          exposure: 6,
+          contrast: 8,
+          highlights: -18,
+          shadows: 18,
+          whites: 4,
+          blacks: -8,
+          vibrance: 10,
+          clarity: 5,
+          sharpen: 12,
+          noiseReduction: 6
+        },
+        clean: {
+          exposure: 0,
+          contrast: 0,
+          highlights: 0,
+          shadows: 0,
+          whites: 0,
+          blacks: 0,
+          warmth: 0,
+          tint: 0,
+          vibrance: 0,
+          saturation: 0,
+          texture: 0,
+          clarity: 0,
+          dehaze: 0,
+          sharpen: 0,
+          noiseReduction: 0,
+          fade: 0,
+          grain: 0,
+          grainSize: 0,
+          grainRoughness: 0,
+          vignette: 0
+        },
+        film: {
+          contrast: 8,
+          highlights: -16,
+          shadows: 10,
+          blacks: 6,
+          warmth: 8,
+          vibrance: 6,
+          saturation: -4,
+          clarity: -3,
+          fade: 14,
+          grain: 18,
+          grainSize: 18,
+          grainRoughness: 24,
+          vignette: 10
+        },
+        portrait: {
+          exposure: 6,
+          contrast: -4,
+          highlights: -18,
+          shadows: 16,
+          warmth: 5,
+          tint: 6,
+          vibrance: 5,
+          saturation: -4,
+          texture: -10,
+          clarity: -8,
+          sharpen: 8,
+          noiseReduction: 14,
+          grain: 2,
+          vignette: 3
+        }
+      };
+      state.values = { ...state.values, ...recipes[type] };
+      renderControls();
+      draw();
+    }
+
+    function shuffleRecipe() {
+      allControlItems().forEach(([key, , min, max]) => {
+        const span = max - min;
+        const current = state.values[key] || 0;
+        state.values[key] = clamp(Math.round(current + (Math.random() - .5) * span * .16), min, max);
+      });
+      renderControls();
+      draw();
+    }
+
+    els.fileInput.addEventListener("change", event => loadImage(event.target.files[0]));
+    els.emptyUploadBtn.addEventListener("click", () => els.fileInput.click());
+    els.dropzone.addEventListener("dragover", event => {
+      event.preventDefault();
+      els.dropzone.style.borderColor = "var(--accent)";
+    });
+    els.dropzone.addEventListener("dragleave", () => {
+      els.dropzone.style.borderColor = "#56606c";
+    });
+    els.dropzone.addEventListener("drop", event => {
+      event.preventDefault();
+      els.dropzone.style.borderColor = "#56606c";
+      loadImage(event.dataTransfer.files[0]);
+    });
+    els.resetBtn.addEventListener("click", () => {
+      if (!state.image) {
+        showStatus("Önce fotoğraf yükle");
+        return;
+      }
+      state.presetName = "Filtre Yok";
+      state.values = withControlDefaults();
+      renderControls();
+      renderPresets();
+      draw();
+      showStatus("Ayarlar sıfırlandı");
+    });
+    els.beforeBtn.addEventListener("pointerdown", () => {
+      state.showingBefore = true;
+      draw();
+    });
+    els.beforeBtn.addEventListener("pointerup", () => {
+      state.showingBefore = false;
+      draw();
+    });
+    els.beforeBtn.addEventListener("pointerleave", () => {
+      if (state.showingBefore) {
+        state.showingBefore = false;
+        draw();
+      }
+    });
+    els.exportBtn.addEventListener("click", exportPng);
+    els.applyAiBtn.addEventListener("click", applyAiPick);
+    els.fitBtn.addEventListener("click", draw);
+    els.copyBtn.addEventListener("click", copyRecipe);
+    els.randomBtn.addEventListener("click", shuffleRecipe);
+    els.presetSearch.addEventListener("input", event => {
+      state.presetSearch = event.target.value;
+      renderPresets();
+    });
+    document.querySelectorAll("[data-quick]").forEach(button => {
+      button.addEventListener("click", () => applyQuickRecipe(button.dataset.quick));
+    });
+
+    state.values = withControlDefaults();
+    renderCollections();
+    renderPresetFilters();
+    renderPresets();
+    renderControls();
+    updateToolState();
+  </script>
+</body>
+</html>
